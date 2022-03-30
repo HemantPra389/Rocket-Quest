@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_countdown_timer/index.dart';
 import 'package:provider/provider.dart';
 import 'package:quiz_app/Widgets/myAppBar.dart';
 import 'package:quiz_app/providers/questions.dart';
 import 'package:quiz_app/screens/result_screen.dart';
+import 'package:flutter_countdown_timer/countdown.dart';
 
 class QuizScreen extends StatefulWidget {
   static const routename = '/quiz-screen';
@@ -13,15 +17,45 @@ class QuizScreen extends StatefulWidget {
 
 int correct_answer_count = 0;
 
+Timer? timer;
+Duration duration = Duration();
+
 class _QuizScreenState extends State<QuizScreen> {
   var question_index = 0;
+  @override
+  void initState() {
+    super.initState();
+    startTimer();
+  }
+
+  startTimer() {
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      addTimer();
+    });
+  }
+
+  addTimer() {
+    final addSecond = 1;
+    setState(() {
+      final seconds = duration.inSeconds + addSecond;
+      duration = Duration(seconds: seconds);
+      print(duration.inSeconds.toString());
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    timer!.cancel();
+    duration = Duration(seconds: 0);
+  }
 
   @override
   Widget build(BuildContext context) {
     var question_script = Provider.of<Questions>(
       context,
     );
-    
+
     return Scaffold(
       appBar: MyAppBar("Quiz", () {
         question_script.question = [];
@@ -41,20 +75,13 @@ class _QuizScreenState extends State<QuizScreen> {
                   color: Colors.grey.shade700,
                   fontWeight: FontWeight.bold),
             ),
-            Text(
-              '${question_script.category_daily}',
-              style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.grey.shade700,
-                  fontWeight: FontWeight.bold),
-            ),
             Container(
               padding: const EdgeInsets.only(bottom: 20, top: 20),
               child: Text(
                 question_script.question_Setter(question_index),
                 style: TextStyle(
                     color: Theme.of(context).primaryColor,
-                    fontSize: 20,
+                    fontSize: 24,
                     fontFamily: 'Ubuntu',
                     fontWeight: FontWeight.bold),
               ),
@@ -87,7 +114,10 @@ class _QuizScreenState extends State<QuizScreen> {
                       } else {
                         Navigator.of(context).pushReplacementNamed(
                             ResultScreen.routename,
-                            arguments: correct_answer_count);
+                            arguments: {
+                              'correct': correct_answer_count,
+                              'duration': duration
+                            });
                       }
                     });
                   }),
@@ -118,7 +148,10 @@ class _QuizScreenState extends State<QuizScreen> {
               ++correct_answer_count;
             }
             Navigator.of(context).pushReplacementNamed(ResultScreen.routename,
-                arguments: correct_answer_count);
+                arguments: {
+                  'correct': correct_answer_count,
+                  'duration': duration
+                });
           }
         });
       },

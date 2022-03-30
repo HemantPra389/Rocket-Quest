@@ -1,40 +1,60 @@
 import 'package:flutter/material.dart';
 
-class MyAppBar extends StatelessWidget with PreferredSizeWidget {
-  final String title;
-  final Function myFun;
-  MyAppBar(this.title, this.myFun);
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-        child: Container(
-      width: double.infinity,
-      child: Stack(
-        children: [
-          IconButton(
-              onPressed: () {
-                myFun();
-              },
-              icon: const Icon(
-                Icons.keyboard_arrow_left,
-                size: 35,
-              )),
-          Container(
-            alignment: Alignment.center,
-            padding: const EdgeInsets.only(top: 10),
-            child: Text(
-              title,
-              style: TextStyle(
-                  fontSize: 24,
-                  fontFamily: 'Gilroy',
-                  color: Colors.grey.shade600),
-            ),
-          )
-        ],
+PreferredSize MyAppBar(String title, Function myFun) {
+  return PreferredSize(
+    preferredSize: Size.fromHeight(80),
+    child: SafeArea(
+      child: Container(
+        margin: EdgeInsets.only(top: 5, bottom: 10),
+        child: AppBar(
+          elevation: 0,
+          primary: false,
+          backgroundColor: Colors.transparent,
+          leading: IconButton(
+            onPressed: () {
+              myFun();
+            },
+            icon: Icon(Icons.arrow_back_ios_new),
+            color: Colors.grey.shade800,
+          ),
+          title: Text(
+            title,
+            style: TextStyle(
+                color: Colors.grey.shade800,
+                fontFamily: 'Gilroy',
+                fontSize: 26),
+          ),
+          centerTitle: true,
+        ),
       ),
-    ));
-  }
+    ),
+  );
 
-  @override
-  Size get preferredSize => const Size.fromHeight(50);
+// SafeArea(
+//         child: Container(
+//       width: double.infinity,
+//       child: Stack(
+//         children: [
+//           IconButton(
+//               onPressed: () {
+//                 myFun();
+//               },
+//               icon: const Icon(
+//                 Icons.keyboard_arrow_left,
+//                 size: 35,
+//               )),
+//           Container(
+//             alignment: Alignment.center,
+
+//             child: Text(
+//               title,
+//               style: TextStyle(
+//                   fontSize: 24,
+//                   fontFamily: 'Gilroy',
+//                   color: Colors.grey.shade600),
+//             ),
+//           )
+//         ],
+//       ),
+//     ));
 }

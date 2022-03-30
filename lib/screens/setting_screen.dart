@@ -13,29 +13,11 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingScreenState extends State<SettingScreen> {
-  String currentLevel = "easy";
-  bool normal_select = false;
-  bool intermediate_select = false;
-  bool hard_select = false;
+  String currentLevel = 'easy';
 
   @override
   Widget build(BuildContext context) {
     var question_script = Provider.of<Questions>(context, listen: false);
-    question_script.recieveData();
-    currentLevel = question_script.questions_level;
-    if (currentLevel == "easy") {
-      normal_select = true;
-      intermediate_select = false;
-      hard_select = false;
-    } else if (currentLevel == "medium") {
-      normal_select = false;
-      intermediate_select = true;
-      hard_select = false;
-    } else if (currentLevel == "hard") {
-      normal_select = false;
-      intermediate_select = false;
-      hard_select = true;
-    }
 
     return Scaffold(
       appBar: MyAppBar('Settings', () {
@@ -55,27 +37,25 @@ class _SettingScreenState extends State<SettingScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                levelSelector('assets/images/easy.png', "Easy", normal_select),
-                levelSelector(
-                    'assets/images/medium.png', "Medium", intermediate_select),
-                levelSelector('assets/images/hard.png', "Hard", hard_select),
+                levelSelector('assets/images/easy.png', "Easy"),
+                levelSelector('assets/images/medium.png', "Medium"),
+                levelSelector('assets/images/hard.png', "Hard"),
               ],
             ),
-            ElevatedButton.icon(
-              onPressed: () {
-                question_script.storeLevel(currentLevel);
-                print(currentLevel);
-              },
-              icon: Icon(Icons.save),
-              label: Text('Save'),
-            )
           ],
         ),
       ),
     );
   }
 
-  Column levelSelector(String imagePath, String level, bool level_value) {
+  bool level_boolean(String level) {
+    if (level.toLowerCase() == currentLevel) {
+      return true;
+    }
+    return false;
+  }
+
+  Column levelSelector(String imagePath, String level) {
     var question_script = Provider.of<Questions>(context);
     return Column(
       children: [
@@ -95,29 +75,24 @@ class _SettingScreenState extends State<SettingScreen> {
                 child: Transform.scale(
                   //It will help to transform and to scale the checkbox
                   scale: 1.4,
-                  child: Checkbox(
-                    value: level_value,
-                    shape: CircleBorder(),
-                    onChanged: (value) {
-                      setState(() {
-                        if (level == "Easy") {
-                          normal_select = true;
-                          intermediate_select = false;
-                          hard_select = false;
-                          currentLevel = 'easy';
-                        } else if (level == "Medium") {
-                          normal_select = false;
-                          intermediate_select = true;
-                          hard_select = false;
-                          currentLevel = 'medium';
-                        } else if (level == "Hard") {
-                          normal_select = false;
-                          intermediate_select = false;
-                          hard_select = true;
-                          currentLevel = 'hard';
-                        }
-                      });
-                    },
+                  child: FutureBuilder(
+                    future: question_script.recieveData().then((value) {
+                      currentLevel = question_script.questions_level.toString();
+                    }),
+                    builder: (context, snapshot) => snapshot.connectionState ==
+                            ConnectionState.waiting
+                        ? CircularProgressIndicator()
+                        : Checkbox(
+                            value: level_boolean(level),
+                            shape: CircleBorder(),
+                            onChanged: (value) {
+                              setState(() {
+                                currentLevel = level.toLowerCase();
+
+                                question_script.storeLevel(level.toLowerCase());
+                              });
+                            },
+                          ),
                   ),
                 ),
               ),

@@ -1,25 +1,36 @@
+import 'dart:io';
+import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:quiz_app/providers/users_data.dart';
+import 'package:quiz_app/screens/auth_screen.dart';
 import 'package:quiz_app/screens/setting_screen.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MyDrawer extends StatelessWidget {
+  final String imageurl;
+  bool isImageLoaded = false;
+  MyDrawer(this.imageurl);
   @override
   Widget build(BuildContext context) {
+    var user = Provider.of<UsersData>(context);
+
     return Drawer(
       child: Container(
         padding: const EdgeInsets.only(top: 90, left: 15, right: 15),
         child: Column(
           children: [
-            const ListTile(
+            ListTile(
               contentPadding: EdgeInsets.only(left: 0),
               leading: CircleAvatar(
-                backgroundImage: AssetImage('assets/images/profile_photo.jpeg'),
                 radius: 25,
-                backgroundColor: Colors.transparent,
+                backgroundColor: Colors.white,
+                backgroundImage: NetworkImage(imageurl),
               ),
               title: Text(
-                'Hemant Prajapati',
+                user.username,
                 style: TextStyle(
                   fontFamily: 'Gilroy',
                   fontSize: 18,
@@ -27,7 +38,7 @@ class MyDrawer extends StatelessWidget {
                   letterSpacing: 1,
                 ),
               ),
-              subtitle: Text('hemantpra389@gmail.com',
+              subtitle: Text(user.email,
                   style: TextStyle(
                     fontFamily: 'Gilroy',
                     fontSize: 14,
@@ -62,22 +73,39 @@ class MyDrawer extends StatelessWidget {
               }
             }),
             Expanded(
-                child: Stack(
-              alignment: Alignment.bottomLeft,
-              children: [
-                Positioned(
-                  child: Text(
+              child: Container(
+                alignment: Alignment.center,
+                child: TextButton.icon(
+                  label: Text(
                     'Log Out ',
                     style: TextStyle(
                         color: Colors.grey.shade800,
                         fontSize: 17,
                         fontWeight: FontWeight.bold),
                   ),
-                  left: 0,
-                  bottom: 30,
-                )
-              ],
-            ))
+                  onPressed: () async {
+                    FirebaseAuth.instance
+                        .signOut()
+                        .then((value) => Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AuthScreen(),
+                            ),
+                            (route) => false));
+                  },
+                  icon: Icon(
+                    Icons.logout,
+                    size: 30,
+                    color: Colors.grey,
+                  ),
+                  // 'Log Out ',
+                  // style: TextStyle(
+                  //     color: Colors.grey.shade800,
+                  //     fontSize: 20,
+                  //     fontWeight: FontWeight.bold),
+                ),
+              ),
+            )
           ],
         ),
       ),

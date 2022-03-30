@@ -1,15 +1,29 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:quiz_app/providers/authProvider.dart';
 import 'package:quiz_app/providers/questions.dart';
+import 'package:quiz_app/providers/users_data.dart';
+import 'package:quiz_app/screens/auth_screen.dart';
 import 'package:quiz_app/screens/daily_quesion_screen.dart';
 import 'package:quiz_app/screens/home_screen.dart';
 import 'package:quiz_app/screens/quiz_screen.dart';
 import 'package:quiz_app/screens/result_screen.dart';
 import 'package:quiz_app/screens/setting_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
+}
+
+String isAuth() {
+  if (FirebaseAuth.instance.currentUser != null) {
+    return HomeScreen.routename;
+  }
+  return '/';
 }
 
 class MyApp extends StatelessWidget {
@@ -19,6 +33,12 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           create: (context) => Questions(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => UsersData(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => AuthProvider(),
         )
       ],
       child: MaterialApp(
@@ -29,9 +49,10 @@ class MyApp extends StatelessWidget {
             caption: TextStyle(color: Color.fromRGBO(131, 89, 163, .8)),
           ),
         ),
-        initialRoute: HomeScreen.routename,
+        initialRoute: isAuth(),
         routes: {
           '/': (ctx) => MyHomePage(),
+          AuthScreen.routename: (ctx) => AuthScreen(),
           SettingScreen.routename: (ctx) => SettingScreen(),
           HomeScreen.routename: (ctx) => HomeScreen(),
           QuizScreen.routename: (ctx) => QuizScreen(),
@@ -94,7 +115,7 @@ class MyHomePage extends StatelessWidget {
                 decoration: getDecoration(0, 40),
                 footer: onBordingButton(context, 'Start', () {
                   Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => HomeScreen()));
+                      MaterialPageRoute(builder: (context) => AuthScreen()));
                 }))
           ],
           isProgressTap: false,

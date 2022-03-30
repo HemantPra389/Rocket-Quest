@@ -12,7 +12,7 @@ class Questions extends ChangeNotifier {
   var request_code = 0;
   String questions_level = 'easy';
 
-  String url_achiever(int category, String newlevel) {
+  String url_achiever(int category, String? newlevel) {
     var url =
         "https://opentdb.com/api.php?amount=10&category=18&difficulty=easy&type=multiple";
     url =
@@ -26,19 +26,19 @@ class Questions extends ChangeNotifier {
     prefs.setString("current_level", level);
   }
 
-  Future<void> storeBoolean(bool setting_level) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('setting_bool', setting_level);
-  }
-
   Future<void> recieveData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    questions_level = prefs.getString('current_level').toString();
+    if (prefs.getString('current_level') == null) {
+      questions_level = 'easy';
+    } else {
+      questions_level = prefs.getString('current_level')!;
+    }
   }
 
   Future<void> fetchQuestion() async {
     var response = await http
         .get(Uri.parse(url_achiever(category_daily, questions_level)));
+
     var extractedData = json.decode(response.body);
     if (extractedData['response_code'] == 0) {
       for (int i = 0; i <= 9; i++) {

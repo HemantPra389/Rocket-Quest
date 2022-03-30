@@ -35,7 +35,9 @@ class DailyQuestionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar("Daily Quiz", () {}),
+      appBar: MyAppBar("Daily Quiz", () {
+        Navigator.pop(context);
+      }),
       body: Container(
         padding: const EdgeInsets.only(top: 15, right: 15, left: 15),
         child: ListView.builder(
@@ -59,7 +61,7 @@ class DailyQuestionScreen extends StatelessWidget {
                   elevation: 5,
                   shadowColor: Colors.black,
                   child: SizedBox(
-                    height: 90,
+                    height: 90,  
                     child: Stack(clipBehavior: Clip.none, children: [
                       Row(
                         children: [

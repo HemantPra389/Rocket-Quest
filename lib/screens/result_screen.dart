@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:quiz_app/Widgets/myAppBar.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:provider/provider.dart';
+import 'package:quiz_app/providers/users_data.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:quiz_app/Widgets/myAppBar.dart';
 import 'package:quiz_app/providers/questions.dart';
 import 'package:quiz_app/screens/home_screen.dart';
 
@@ -12,7 +14,20 @@ class ResultScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var resultData = Provider.of<Questions>(context);
-    final received_result = ModalRoute.of(context)!.settings.arguments as int;
+    final received_result = ModalRoute.of(context)!.settings.arguments as Map;
+    int correct_answer = received_result['correct'];
+    Duration duration = received_result['duration'];
+    var user = Provider.of<UsersData>(context);
+    Future<void> uploadResult() async {
+      await FirebaseFirestore.instance.collection('user-result').add({
+        'image_url': user.imageUrl ?? '',
+        'username': user.username,
+        'result_score': correct_answer,
+        'duration': duration.inSeconds.toString()
+      });
+    }
+
+    uploadResult();
 
     return Scaffold(
         appBar: MyAppBar("Quiz Result", () {}),
@@ -39,9 +54,9 @@ class ResultScreen extends StatelessWidget {
                       child: CircleAvatar(
                         radius: 48,
                         backgroundColor: Colors.grey.shade600,
-                        child: const CircleAvatar(
+                        child:  CircleAvatar(
                           backgroundImage:
-                              AssetImage('assets/images/profile_photo.jpeg'),
+                              NetworkImage(user.imageUrl!),
                           radius: 46,
                           backgroundColor: Colors.transparent,
                         ),
@@ -57,19 +72,21 @@ class ResultScreen extends StatelessWidget {
                       'assets/images/badge_.png',
                       width: 80,
                     ),
-                    resultText(30, "$received_result/10", 30, FontWeight.w600,
+                    resultText(30, "$correct_answer/10", 30, FontWeight.w600,
                         Colors.grey.shade600),
                     Padding(
                       padding: const EdgeInsets.all(15.0),
                       child: LinearPercentIndicator(
                         width: 350,
-                        percent: received_result.toDouble() / 10,
+                        percent: correct_answer / 10,
                         alignment: MainAxisAlignment.center,
                         barRadius: const Radius.circular(20),
                         progressColor: Colors.pink.shade300,
                         lineHeight: 15,
                       ),
                     ),
+                    resultText(30, duration.inSeconds.toString() + ' sec', 30,
+                        FontWeight.w600, Colors.grey.shade600),
                     Expanded(
                       child: Container(
                         alignment: Alignment.bottomCenter,
@@ -81,11 +98,10 @@ class ResultScreen extends StatelessWidget {
                               Navigator.of(context)
                                   .popAndPushNamed(HomeScreen.routename);
                             }),
-                            resultSelectionBtn("Share", ()  {
-                              
+                            resultSelectionBtn("Share", () {
                               Share.share(
-                                  'Hemant Prajapati scored $resultData on QuizApp ',
-                                  );
+                                'Hemant Prajapati scored $resultData on QuizApp ',
+                              );
                             })
                           ],
                         ),
