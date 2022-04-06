@@ -11,6 +11,50 @@ import 'package:quiz_app/screens/home_screen.dart';
 class ResultScreen extends StatelessWidget {
   static const routename = '/result-screen';
 
+  Container resultText(double topMargin, String title, double fontsize,
+      FontWeight fontweight, Color color) {
+    return Container(
+      margin: EdgeInsets.only(top: topMargin),
+      child: Text(
+        title,
+        style: TextStyle(
+            fontSize: fontsize,
+            fontFamily: 'Gilroy',
+            fontWeight: fontweight,
+            color: color),
+      ),
+    );
+  }
+
+  InkWell resultSelectionBtn(String title, Function myfun) {
+    return InkWell(
+      onTap: () {
+        myfun();
+      },
+      child: SizedBox(
+        height: 70,
+        width: 170,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Image.asset(
+              'assets/images/box.png',
+              fit: BoxFit.fill,
+            ),
+            Text(
+              title,
+              style: TextStyle(
+                  color: Colors.grey.shade800,
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Ubuntu'),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var resultData = Provider.of<Questions>(context);
@@ -113,49 +157,5 @@ class ResultScreen extends StatelessWidget {
             ],
           ),
         ));
-  }
-
-  Container resultText(double topMargin, String title, double fontsize,
-      FontWeight fontweight, Color color) {
-    return Container(
-      margin: EdgeInsets.only(top: topMargin),
-      child: Text(
-        title,
-        style: TextStyle(
-            fontSize: fontsize,
-            fontFamily: 'Gilroy',
-            fontWeight: fontweight,
-            color: color),
-      ),
-    );
-  }
-
-  InkWell resultSelectionBtn(String title, Function myfun) {
-    return InkWell(
-      onTap: () {
-        myfun();
-      },
-      child: SizedBox(
-        height: 70,
-        width: 170,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Image.asset(
-              'assets/images/box.png',
-              fit: BoxFit.fill,
-            ),
-            Text(
-              title,
-              style: TextStyle(
-                  color: Colors.grey.shade800,
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Ubuntu'),
-            )
-          ],
-        ),
-      ),
-    );
   }
 }

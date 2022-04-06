@@ -22,6 +22,39 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final GlobalKey<ScaffoldState> _key = GlobalKey();
 
+  InkWell homeSelectionBtn(
+      String title, Function myfun, Color color, Color fontcolor) {
+    return InkWell(
+      onTap: () {
+        myfun();
+      },
+      child: SizedBox(
+        height: 60,
+        width: 280,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Image.asset(
+              'assets/images/_box.png',
+              width:
+                  double.infinity, //It helps to achieve the full stretched box.
+              fit: BoxFit.fill,
+              color: color,
+            ),
+            Text(
+              title,
+              style: TextStyle(
+                  color: fontcolor,
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Ubuntu'),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var question_script = Provider.of<Questions>(context, listen: false);
@@ -162,39 +195,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               )),
-    );
-  }
-
-  InkWell homeSelectionBtn(
-      String title, Function myfun, Color color, Color fontcolor) {
-    return InkWell(
-      onTap: () {
-        myfun();
-      },
-      child: SizedBox(
-        height: 60,
-        width: 280,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Image.asset(
-              'assets/images/_box.png',
-              width:
-                  double.infinity, //It helps to achieve the full stretched box.
-              fit: BoxFit.fill,
-              color: color,
-            ),
-            Text(
-              title,
-              style: TextStyle(
-                  color: fontcolor,
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Ubuntu'),
-            )
-          ],
-        ),
-      ),
     );
   }
 }

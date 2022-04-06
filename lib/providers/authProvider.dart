@@ -10,6 +10,11 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 import 'users_data.dart';
 
+/*
+* ChangeNotifier class uses with keyword which helps the user to bring listenable changes.This usually used for stateManagement.
+* Maximum Function in these type of classes are Future Functions which returns future and need some time to be executed. In Future fuction we use async keyword after () async 
+*We can use several way of storing changing and executing of data. 
+*/
 class AuthProvider with ChangeNotifier {
   Map<String, String> userData_signup = {
     'email': '',
@@ -22,6 +27,7 @@ class AuthProvider with ChangeNotifier {
   Future<void> createUser(Map<String, String> usercredentials,
       BuildContext context, File image) async {
     try {
+      //* To create a firebase account we just have to remember the syntax which returns us the future for which we write await keyword before the syntax
       final authResult = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
               email: usercredentials['email']!,
@@ -31,10 +37,12 @@ class AuthProvider with ChangeNotifier {
         'username': usercredentials['username'],
         'email': usercredentials['email'],
       }, imageUrl).then((value) => print('Successfully Saved!'));
+      //*In FirebaseStorage we store data in bucket first of all we need bucket or reference where the file is to be stored and just create any numbe of child
       final ref = await FirebaseStorage.instance
           .ref()
           .child('user-images')
           .child(authResult.user!.uid + '.jpeg');
+      //*putfile is the function just to put the file in the location create above.
       await ref.putFile(image).whenComplete(() => null);
       _imageUrl = await ref.getDownloadURL();
 
@@ -46,6 +54,7 @@ class AuthProvider with ChangeNotifier {
         'email': usercredentials['email'],
         'image_url': _imageUrl
       });
+      //* According to our needs we can create errors just by using on keyword
     } on FirebaseException catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(error.message!),
@@ -76,6 +85,7 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  //* For google sign in just create a instance of googleSignin the create a user
   final googleSignIn = GoogleSignIn();
   GoogleSignInAccount? _user;
   GoogleSignInAccount get user {
@@ -84,6 +94,7 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> login_google(BuildContext context) async {
     try {
+      //*below syntax will create a pop up which contains some id to be used for sign in
       final GoogleSignInAccount? googleUser =
           await googleSignIn.signIn().catchError((error) {
         print(error);
@@ -92,11 +103,12 @@ class AuthProvider with ChangeNotifier {
       if (googleUser == null) {
         return;
       }
-      _user = googleUser;
-      final googleauth = await googleUser.authentication;
+      _user = googleUser; //*initializing user
+      final googleauth = await googleUser.authentication; //*creating auth
       final credentials = GoogleAuthProvider.credential(
-          accessToken: googleauth.accessToken, idToken: googleauth.idToken);
-      await FirebaseAuth.instance
+          accessToken: googleauth.accessToken,
+          idToken: googleauth.idToken); //*checking user
+      await FirebaseAuth.instance //*signing in the email
           .signInWithCredential(credentials)
           .then((value) async {
         var userdata = Provider.of<UsersData>(context, listen: false);

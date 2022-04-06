@@ -29,32 +29,4 @@ PreferredSize MyAppBar(String title, Function myFun) {
       ),
     ),
   );
-
-// SafeArea(
-//         child: Container(
-//       width: double.infinity,
-//       child: Stack(
-//         children: [
-//           IconButton(
-//               onPressed: () {
-//                 myFun();
-//               },
-//               icon: const Icon(
-//                 Icons.keyboard_arrow_left,
-//                 size: 35,
-//               )),
-//           Container(
-//             alignment: Alignment.center,
-
-//             child: Text(
-//               title,
-//               style: TextStyle(
-//                   fontSize: 24,
-//                   fontFamily: 'Gilroy',
-//                   color: Colors.grey.shade600),
-//             ),
-//           )
-//         ],
-//       ),
-//     ));
 }

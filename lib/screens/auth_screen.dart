@@ -13,13 +13,21 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-  bool _isLogin = false;
-  bool _isLoading = false;
-  bool isImageLoaded = false;
-  GlobalKey<FormState> _key = GlobalKey();
+  //* it should be final because it is unchangeable
   dynamic image;
 
+  bool isImageLoaded = false;
+
+  bool _isLoading = false;
+  bool _isLogin = false;
+  final GlobalKey<FormState> _key =
+      GlobalKey(); //*Declaring a global key helps the form to be unique FormState defines that the key is dependent on formstate.
+
   void _pickedImage() async {
+    /*
+    *For Picking the file from any source which can be gallery or camera the syntax written below which returns us the future 
+    *we just have to put the file inside the image by just creating a file of the pickedimagefile.path 
+     */
     var pickedImageFile = await ImagePicker.platform
         .getImage(source: ImageSource.gallery, imageQuality: 40, maxWidth: 150);
     setState(() {
@@ -34,6 +42,7 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     var authprovider = Provider.of<AuthProvider>(context);
+    //*creating a provider helps to not call the whole context when running
 
     return Scaffold(
         body: Container(
@@ -81,43 +90,14 @@ class _AuthScreenState extends State<AuthScreen> {
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        TextFormField(
-                          decoration: InputDecoration(
-                            hintText: 'Enter your email',
-                            hintStyle: TextStyle(fontSize: 18),
-                            filled: true,
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(7),
-                                borderSide: BorderSide.none),
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 18),
-                            fillColor: Colors.white,
-                          ),
-                          style: TextStyle(
-                            fontSize: 20,
-                          ),
-                          validator: (value) {
-                            if (value!.isEmpty || !value.contains('@')) {
-                              return;
-                            }
-                            return null;
-                          },
-                          onSaved: (newValue) {
-                            if (_isLogin) {
-                              authprovider.userData_login['email'] =
-                                  newValue!.trim();
-                            } else {
-                              authprovider.userData_signup['email'] =
-                                  newValue!.trim();
-                            }
-                          },
-                        ),
-                        if (!_isLogin)
-                          TextFormField(
+                        Material(
+                          shadowColor: Colors.white,
+                          elevation: 2,
+                          child: TextFormField(
                             decoration: InputDecoration(
-                              hintText: 'Enter your username',
-                              filled: true,
+                              hintText: 'Enter your email',
                               hintStyle: TextStyle(fontSize: 18),
+                              filled: true,
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(7),
                                   borderSide: BorderSide.none),
@@ -129,6 +109,76 @@ class _AuthScreenState extends State<AuthScreen> {
                               fontSize: 20,
                             ),
                             validator: (value) {
+                              if (value!.isEmpty || !value.contains('@')) {
+                                return;
+                              }
+                              return null;
+                            },
+                            onSaved: (newValue) {
+                              if (_isLogin) {
+                                //*Validator and saved are the important fields in every textformfield
+                                //*trim helps to remove the whitespaces present in the String like last space in email. This helps the code to be bug free.
+                                authprovider.userData_login['email'] =
+                                    newValue!.trim();
+                              } else {
+                                authprovider.userData_signup['email'] =
+                                    newValue!.trim();
+                              }
+                            },
+                          ),
+                        ),
+                        if (!_isLogin)
+                          Material(
+                            shadowColor: Colors.white,
+                            elevation: 2,
+                            child: TextFormField(
+                              decoration: InputDecoration(
+                                hintText: 'Enter your username',
+                                filled: true,
+                                hintStyle: TextStyle(fontSize: 18),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(7),
+                                    borderSide: BorderSide.none),
+                                contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 15, vertical: 18),
+                                fillColor: Colors.white,
+                              ),
+                              style: TextStyle(
+                                fontSize: 20,
+                              ),
+                              validator: (value) {
+                                if (value!.isEmpty ||
+                                    value.characters.length < 6) {
+                                  return;
+                                }
+                                return null;
+                              },
+                              onSaved: (newValue) {
+                                authprovider.userData_signup['username'] =
+                                    newValue!.trim();
+                              },
+                            ),
+                          ),
+                        Material(
+                          shadowColor: Colors.white,
+                          elevation: 2,
+                          child: TextFormField(
+                            decoration: InputDecoration(
+                              hintText: 'Password',
+                              filled: true,
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(7),
+                                  borderSide: BorderSide.none),
+                              hintStyle: TextStyle(fontSize: 18),
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 18),
+                              fillColor: Colors.white,
+                            ),
+                            obscureText: true,
+                            style: TextStyle(
+                              fontSize: 20,
+                            ),
+                            validator: (value) {
                               if (value!.isEmpty ||
                                   value.characters.length < 6) {
                                 return;
@@ -136,41 +186,15 @@ class _AuthScreenState extends State<AuthScreen> {
                               return null;
                             },
                             onSaved: (newValue) {
-                              authprovider.userData_signup['username'] =
-                                  newValue!.trim();
+                              if (_isLogin) {
+                                authprovider.userData_login['password'] =
+                                    newValue!;
+                              } else {
+                                authprovider.userData_signup['password'] =
+                                    newValue!;
+                              }
                             },
                           ),
-                        TextFormField(
-                          decoration: InputDecoration(
-                            hintText: 'Password',
-                            filled: true,
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(7),
-                                borderSide: BorderSide.none),
-                            hintStyle: TextStyle(fontSize: 18),
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 18),
-                            fillColor: Colors.white,
-                          ),
-                          obscureText: true,
-                          style: TextStyle(
-                            fontSize: 20,
-                          ),
-                          validator: (value) {
-                            if (value!.isEmpty || value.characters.length < 6) {
-                              return;
-                            }
-                            return null;
-                          },
-                          onSaved: (newValue) {
-                            if (_isLogin) {
-                              authprovider.userData_login['password'] =
-                                  newValue!;
-                            } else {
-                              authprovider.userData_signup['password'] =
-                                  newValue!;
-                            }
-                          },
                         ),
                       ])),
             ),
