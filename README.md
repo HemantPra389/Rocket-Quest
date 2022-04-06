@@ -1,16 +1,32 @@
-# quiz_app
 
-A new Flutter project.
+# Flutter Quiz App
 
-## Getting Started
+A Flutter App dealing with JSON fetched from API.
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+## Features
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Uses Networks for fetching the data.
+- No need of local storage 
+- Beautiful UI
+- Sign In and Logout Features
+- Smooth Splash Screen
+- Quite Drawer
+
+
+## Optimizations
+
+- By Using Provider Package State Management becomes the easy part hence I used Provider Package for Complete Development. 
+- Storing the data of user online results in more flexibility.
+- Uses Exception Handling to provide smoother Experience.
+
+
+## Screenshots
+
+![App Screenshot](https://raw.githubusercontent.com/HemantPra389/QuizAppFlutter/main/Untitled%20design%20(1)/1.png)
+![App Screenshot](https://raw.githubusercontent.com/HemantPra389/QuizAppFlutter/main/Untitled%20design%20(1)/2.png)
+
+## Authors
+
+- [@HemantPra389](https://github.com/HemantPra389)
